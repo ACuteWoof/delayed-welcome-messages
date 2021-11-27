@@ -26,7 +26,7 @@ def add_server(sid) :
       'Content-Type': 'application/json',
       'X-Master-Key': bin_key
     }
-    data = {sid: {"channel":"general","delay_in_seconds":"10","welcome_format":"Welcome {0.mention}!"}}
+    data = getbin()["record"][sid] = {"channel":"general","delay_in_seconds":"10","welcome_format":"Welcome {0.mention}!"}
     req = requests.put(url, json=data, headers=headers)
     print(req.text)
 
