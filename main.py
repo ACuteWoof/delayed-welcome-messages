@@ -51,7 +51,7 @@ class AdminOnly(commands.Cog, description="Admin commands"):
           'X-Master-Key': bin_key
         }
         data = get_bin()["record"]
-        data["format"] = fmt
+        data["welcome_format"] = fmt
         req = requests.put(url, json=data, headers=headers)
         print(req.text)
 
