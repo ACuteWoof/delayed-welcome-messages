@@ -80,7 +80,7 @@ async def on_member_join(member):
     welcome_channel = get_bin()["record"]["channel"]
     await asyncio.sleep(int(delay))
     if member in member.guild.members:
-        channel =  discord.utils.get(member.guild.channels, name=fmt)
+        channel = discord.utils.get(member.guild.channels, name=channel)
         print(member)
         await channel.send(fmt.format(member, member.server))
     else:
