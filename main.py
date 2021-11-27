@@ -48,7 +48,7 @@ class AdminOnly(commands.Cog, description="Admin commands"):
         try:
             data = get_bin()["record"]
             data[str(ctx.guild.id)]["delay_in_seconds"] = delay
-        except:
+        except KeyError:
             add_server(str(ctx.guild.id))
             data = get_bin()["record"]
             data[str(ctx.guild.id)]["delay_in_seconds"] = delay
@@ -67,7 +67,7 @@ class AdminOnly(commands.Cog, description="Admin commands"):
         try:
             data = get_bin()["record"]
             data[str(ctx.guild.id)]["welcome_format"] = fmt
-        except:
+        except KeyError:
             add_server(str(ctx.guild.id))
             data = get_bin()["record"]
             data[str(ctx.guild.id)]["welcome_format"] = fmt
@@ -86,7 +86,7 @@ class AdminOnly(commands.Cog, description="Admin commands"):
         try:
             data = get_bin()["record"]
             data[str(ctx.guild.id)]["channel"] = channel
-        except:
+        except KeyError:
             add_server(str(ctx.guild.id))
             data = get_bin()["record"]
             data[str(ctx.guild.id)]["channel"] = channel
@@ -103,7 +103,7 @@ async def on_ready():
 async def on_member_join(member):
     try:
         delay = get_bin()["record"][str(member.guild.id)]["delay_in_seconds"]
-    except:
+    except KeyError:
         add_server(str(member.guild.id))
     finally:
         fmt = get_bin()["record"][str(member.guild.id)]["welcome_format"]
