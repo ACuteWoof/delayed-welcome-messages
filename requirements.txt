@@ -1,2 +1,2 @@
 py-cord
-psycopg2
+requests
