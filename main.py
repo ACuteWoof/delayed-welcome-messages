@@ -11,25 +11,15 @@ intents.members = True
 bin_key = os.getenv("BIN_KEY")
 
 def get_bin() :
-    url = "https://api.jsonbin.io/v3/b/61a20e4701558c731cc9a7ff/latest"
-    headers = {
-      'X-Master-Key': bin_key
-    }
-
-    req = requests.get(url, json=None, headers=headers)
-    print(req.text)
-    return json.loads(req.text)
+    with open("settings.json", "r") as file:
+        data = json.load(file)
+    print(data)
+    return data
 
 def add_server(sid) :
-    url = 'https://api.jsonbin.io/v3/b/61a20e4701558c731cc9a7ff'
-    headers = {
-      'Content-Type': 'application/json',
-      'X-Master-Key': bin_key
-    }
-    data = get_bin()["record"]
-    data[sid] = {"channel":"general","delay_in_seconds":"10","welcome_format":"Welcome {0.mention}!"}
-    req = requests.put(url, json=data, headers=headers)
-    print(req.text)
+    data = get_bin()
+    data["record"][sid] = {"channel":"general","delay_in_seconds":"10","welcome_format":"Welcome {0.mention}!"}
+    json.dump(data, fp=open("settings.json", "w"))
 
 bot = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
@@ -40,59 +30,56 @@ class AdminOnly(commands.Cog, description="Admin commands"):
     @commands.has_permissions(administrator=True)
     @commands.command()
     async def update_delay(self, ctx, delay):
-        url = 'https://api.jsonbin.io/v3/b/61a20e4701558c731cc9a7ff'
-        headers = {
-          'Content-Type': 'application/json',
-          'X-Master-Key': bin_key
-        }
         try:
-            data = get_bin()["record"]
-            data[str(ctx.guild.id)]["delay_in_seconds"] = delay
+            data = get_bin()
+            data["record"][str(ctx.guild.id)]["delay_in_seconds"] = delay
         except KeyError:
             add_server(str(ctx.guild.id))
-            data = get_bin()["record"]
-            data[str(ctx.guild.id)]["delay_in_seconds"] = delay
+            data = get_bin()
+            data["record"][str(ctx.guild.id)]["delay_in_seconds"] = delay
         finally:
-            req = requests.put(url, json=data, headers=headers)
-            print(req.text)
+            json.dump(
+                    data,
+                    fp=open(
+                         "settings.json", "w"
+                        )
+                    )
 
     @commands.has_permissions(administrator=True)
     @commands.command()
     async def update_format(self, ctx, fmt):
-        url = 'https://api.jsonbin.io/v3/b/61a20e4701558c731cc9a7ff'
-        headers = {
-          'Content-Type': 'application/json',
-          'X-Master-Key': bin_key
-        }
         try:
-            data = get_bin()["record"]
-            data[str(ctx.guild.id)]["welcome_format"] = fmt
+            data = get_bin()
+            data["record"][str(ctx.guild.id)]["welcome_format"] = fmt
         except KeyError:
             add_server(str(ctx.guild.id))
-            data = get_bin()["record"]
-            data[str(ctx.guild.id)]["welcome_format"] = fmt
-        finally: 
-            req = requests.put(url, json=data, headers=headers)
-            print(req.text)
+            data = get_bin()
+            data["record"][str(ctx.guild.id)]["welcome_format"] = fmt
+        finally:
+            json.dump(
+                    data,
+                    fp=open(
+                         "settings.json", "w"
+                        )
+                    )
 
     @commands.has_permissions(administrator=True)
     @commands.command()
     async def update_channel(self, ctx, channel):
-        url = 'https://api.jsonbin.io/v3/b/61a20e4701558c731cc9a7ff'
-        headers = {
-          'Content-Type': 'application/json',
-          'X-Master-Key': bin_key
-        }
         try:
-            data = get_bin()["record"]
-            data[str(ctx.guild.id)]["channel"] = channel
+            data = get_bin()
+            data["record"][str(ctx.guild.id)]["channel"] = channel
         except KeyError:
             add_server(str(ctx.guild.id))
-            data = get_bin()["record"]
-            data[str(ctx.guild.id)]["channel"] = channel
+            data = get_bin()
+            data["record"][str(ctx.guild.id)]["channel"] = channel
         finally:
-            req = requests.put(url, json=data, headers=headers)
-            print(req.text)
+            json.dump(
+                    data,
+                    fp=open(
+                         "settings.json", "w"
+                        )
+                    )
 
 
 @bot.event
