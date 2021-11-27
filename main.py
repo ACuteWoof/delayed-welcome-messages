@@ -20,8 +20,15 @@ def get_bin() :
     print(req.text)
     return json.loads(req.text)
 
-
-
+def add_server(sid) :
+    url = 'https://api.jsonbin.io/v3/b/61a20e4701558c731cc9a7ff'
+    headers = {
+      'Content-Type': 'application/json',
+      'X-Master-Key': bin_key
+    }
+    data = {sid: {"channel":"general","delay_in_seconds":"10","welcome_format":"Welcome {0.mention}!"}}
+    req = requests.put(url, json=data, headers=headers)
+    print(req.text)
 
 bot = commands.Bot(
     command_prefix=commands.when_mentioned_or("!"),
@@ -37,10 +44,16 @@ class AdminOnly(commands.Cog, description="Admin commands"):
           'Content-Type': 'application/json',
           'X-Master-Key': bin_key
         }
-        data = get_bin()["record"]
-        data["delay_in_seconds"] = delay
-        req = requests.put(url, json=data, headers=headers)
-        print(req.text)
+        try:
+            data = get_bin()["record"]
+            data[str(ctx.guild.id)]["delay_in_seconds"] = delay
+        except:
+            add_server(str(ctx.guild.id))
+            data = get_bin()["record"]
+            data[str(ctx.guild.id)]["delay_in_seconds"] = delay
+        finally:
+            req = requests.put(url, json=data, headers=headers)
+            print(req.text)
 
     @commands.has_permissions(administrator=True)
     @commands.command()
@@ -50,10 +63,16 @@ class AdminOnly(commands.Cog, description="Admin commands"):
           'Content-Type': 'application/json',
           'X-Master-Key': bin_key
         }
-        data = get_bin()["record"]
-        data["welcome_format"] = fmt
-        req = requests.put(url, json=data, headers=headers)
-        print(req.text)
+        try:
+            data = get_bin()["record"]
+            data[str(ctx.guild.id)]["welcome_format"] = fmt
+        except:
+            add_server(str(ctx.guild.id))
+            data = get_bin()["record"]
+            data[str(ctx.guild.id)]["welcome_format"] = fmt
+        finally: 
+            req = requests.put(url, json=data, headers=headers)
+            print(req.text)
 
     @commands.has_permissions(administrator=True)
     @commands.command()
@@ -63,10 +82,16 @@ class AdminOnly(commands.Cog, description="Admin commands"):
           'Content-Type': 'application/json',
           'X-Master-Key': bin_key
         }
-        data = get_bin()["record"]
-        data["channel"] = channel
-        req = requests.put(url, json=data, headers=headers)
-        print(req.text)
+        try:
+            data = get_bin()["record"]
+            data[str(ctx.guild.id)]["channel"] = channel
+        except:
+            add_server(str(ctx.guild.id))
+            data = get_bin()["record"]
+            data[str(ctx.guild.id)]["channel"] = channel
+        finally:
+            req = requests.put(url, json=data, headers=headers)
+            print(req.text)
 
 
 @bot.event
@@ -75,16 +100,20 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    delay = get_bin()["record"]["delay_in_seconds"]
-    fmt = get_bin()["record"]["welcome_format"]
-    welcome_channel = get_bin()["record"]["channel"]
-    await asyncio.sleep(int(delay))
-    if member in member.guild.members:
-        channel = discord.utils.get(member.guild.channels, name=welcome_channel)
-        print(member)
-        await channel.send(fmt.format(member))
-    else:
-        print("Left before welcomed.")
+    try:
+        delay = get_bin()["record"][str(member.guild.id)]["delay_in_seconds"]
+    except:
+        add_server(str(member.guild.id))
+    finally:
+        fmt = get_bin()["record"][str(member.guild.id)]["welcome_format"]
+        welcome_channel = get_bin()["record"][str(member.guild.id)]["channel"]
+        await asyncio.sleep(int(delay))
+        if member in member.guild.members:
+            channel = discord.utils.get(member.guild.channels, name=welcome_channel)
+            print(member)
+            await channel.send(fmt.format(member))
+        else:
+            print("Left before welcomed.")
 
 bot.add_cog(AdminOnly())
 bot.run(os.getenv("DISCORD_BOT_TOKEN"))
