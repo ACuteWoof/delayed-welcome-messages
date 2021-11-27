@@ -18,7 +18,7 @@ def get_bin() :
 
 def add_server(sid) :
     data = get_bin()
-    data["record"][sid] = {"channel":"general","delay_in_seconds":"10","welcome_format":"Welcome {0.mention}!"}
+    data["welcomer"][sid] = {"channel":"general","delay_in_seconds":"10","welcome_format":"Welcome {0.mention}!"}
     json.dump(data, fp=open("settings.json", "w"))
 
 bot = commands.Bot(
@@ -32,11 +32,11 @@ class AdminOnly(commands.Cog, description="Admin commands"):
     async def update_delay(self, ctx, delay):
         try:
             data = get_bin()
-            data["record"][str(ctx.guild.id)]["delay_in_seconds"] = delay
+            data["welcomer"][str(ctx.guild.id)]["delay_in_seconds"] = delay
         except KeyError:
             add_server(str(ctx.guild.id))
             data = get_bin()
-            data["record"][str(ctx.guild.id)]["delay_in_seconds"] = delay
+            data["welcomer"][str(ctx.guild.id)]["delay_in_seconds"] = delay
         finally:
             json.dump(
                     data,
@@ -50,11 +50,11 @@ class AdminOnly(commands.Cog, description="Admin commands"):
     async def update_format(self, ctx, fmt):
         try:
             data = get_bin()
-            data["record"][str(ctx.guild.id)]["welcome_format"] = fmt
+            data["welcomer"][str(ctx.guild.id)]["welcome_format"] = fmt
         except KeyError:
             add_server(str(ctx.guild.id))
             data = get_bin()
-            data["record"][str(ctx.guild.id)]["welcome_format"] = fmt
+            data["welcomer"][str(ctx.guild.id)]["welcome_format"] = fmt
         finally:
             json.dump(
                     data,
@@ -68,11 +68,11 @@ class AdminOnly(commands.Cog, description="Admin commands"):
     async def update_channel(self, ctx, channel):
         try:
             data = get_bin()
-            data["record"][str(ctx.guild.id)]["channel"] = channel
+            data["welcomer"][str(ctx.guild.id)]["channel"] = channel
         except KeyError:
             add_server(str(ctx.guild.id))
             data = get_bin()
-            data["record"][str(ctx.guild.id)]["channel"] = channel
+            data["welcomer"][str(ctx.guild.id)]["channel"] = channel
         finally:
             json.dump(
                     data,
@@ -89,12 +89,12 @@ async def on_ready():
 @bot.event
 async def on_member_join(member):
     try:
-        delay = get_bin()["record"][str(member.guild.id)]["delay_in_seconds"]
+        delay = get_bin()["welcomer"][str(member.guild.id)]["delay_in_seconds"]
     except KeyError:
         add_server(str(member.guild.id))
     finally:
-        fmt = get_bin()["record"][str(member.guild.id)]["welcome_format"]
-        welcome_channel = get_bin()["record"][str(member.guild.id)]["channel"]
+        fmt = get_bin()["welcomer"][str(member.guild.id)]["welcome_format"]
+        welcome_channel = get_bin()["welcomer"][str(member.guild.id)]["channel"]
         await asyncio.sleep(int(delay))
         if member in member.guild.members:
             channel = discord.utils.get(member.guild.channels, name=welcome_channel)
