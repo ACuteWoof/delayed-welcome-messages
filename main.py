@@ -82,7 +82,7 @@ async def on_member_join(member):
     if member in member.guild.members:
         channel = discord.utils.get(member.guild.channels, name=welcome_channel)
         print(member)
-        await channel.send(fmt.format(member, member.server))
+        await channel.send(fmt.format(member))
     else:
         print("Left before welcomed.")
 
