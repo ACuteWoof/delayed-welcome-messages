@@ -1,10 +1,4 @@
-
-title: "Delayed Welcome Messages Bot for Discord"
-author: "ACuteWoof"
-description: "Made with <b style=\"color: #f45;\">&lt;3</b>"
-permalink: /:title/
-lang: "en"
-excerpt_separator: "\n\n\n"
-date_format: "%B %d, %Y"
-
 remote_theme: niklasbuschmann/contrast
+
+plugins:
+  - jekyll-remote-theme
