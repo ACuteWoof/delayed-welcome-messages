@@ -7,6 +7,12 @@
 This bot allows you to set custom welcome messages within a delay of a member joining a server.
 It's #FOSS and meant to be copied so feel free to copy the code and use it in your own bot.
 
+## Running the bot
+
+- Clone this repository `git clone https://github.com/acutewoof/delayed-welcome-messages.git`
+- Set the environment variable `DISCORD_BOT_TOKEN` to your bot's token
+- Run `main.py` using python
+
 ## Commands
 
 Command prefix: `!`
